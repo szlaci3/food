@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+## Pantry Explorer — Product Discovery & Organization App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Pantry Explorer** is a scalable front-end application built on top of the OpenFoodFacts API, designed to explore, curate, and organize food products into personalized collections.
 
-Currently, two official plugins are available:
+The app combines **remote product discovery** with **local state management**, allowing users to search for products, save them into a personal “pantry,” and organize them into custom categories such as *Breakfast*, *High-protein*, or *To try*. Users can also compare products within categories using structured nutritional data.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Core Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Product Discovery**
 
-## Expanding the ESLint configuration
+  * Search and filter products via OpenFoodFacts API
+  * Paginated results with async request handling
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* **Product Details**
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+  * View nutritional data, brand, and Nutri-Score
+  * Add/remove products from personal pantry
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **Pantry Management**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+  * Persist a curated list of saved products
+  * Assign products to one or multiple categories
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+* **Category System**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+  * Create, rename, and delete custom collections
+  * View grouped products per category
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* **Product Comparison**
+
+  * Tabular comparison (e.g., sugars, nutrition grade, brand)
+
+---
+
+## Architecture & State Design
+
+The app emphasizes **scalable state modeling using Redux Toolkit**, with a clear separation of concerns:
+
+### 1. Remote Data Layer (`products` slice)
+
+* Normalized product entities (`productsById`)
+* Search state (query, filters, pagination, result IDs)
+* Async lifecycle handling (loading, error, caching)
+
+### 2. UI State Layer (`catalogUI` slice)
+
+* Query and filter state (Nutri-Score, brand, etc.)
+* Sorting and pagination controls
+* Selection state for future bulk actions
+
+### 3. Local Domain Layer (`collections` slice — Phase 2)
+
+* User-defined categories
+* Many-to-many relationships between products and categories
+* Local-only metadata (tags, notes)
+
+---
+
+## Technical Highlights
+
+* **Redux Toolkit with normalized state** for efficient entity management
+* **Async thunks** for API interaction and request lifecycle control
+* **Separation of remote vs local state**, enabling scalable architecture
+* **Relational data modeling** (many-to-many: products ↔ categories)
+* **Memoized selectors** for derived views (e.g., filtered pantry, category contents)
+* **Extensible architecture** supporting future features without refactoring
+
+---
+
+## Scalability & Extensions
+
+The project is intentionally scoped small but designed to grow:
+
+* Bulk selection and category assignment
+* Offline persistence (localStorage / Redux Persist)
+* Advanced filtering (e.g., low sugar, missing data)
+* Infinite scroll / pagination improvements
+* User annotations (notes, tags)
+
+---
+
+## Key Takeaway
+
+This project demonstrates the ability to design and implement a **real-world, scalable front-end architecture**, balancing:
+
+* API-driven data
+* Complex local state
+* Clean separation of concerns
+* Maintainable and extensible Redux patterns
+
+---
