@@ -1,11 +1,17 @@
-
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { setQuery, setSort, setPage, setFilters } from '../features/catalogUI/catalogUISlice';
+import { fetchProducts } from '../features/products/productsSlice';
 
 export default function CatalogPage() {
   const dispatch = useAppDispatch();
   const { query, sort, currentPage, filters } = useAppSelector((state) => state.catalogUI);
   const { entities, results, loading, error } = useAppSelector((state) => state.products);
+
+  useEffect(() => {
+    // We stringify filters purely for dependency array safety
+    dispatch(fetchProducts({ query, sort, currentPage, filters }));
+  }, [dispatch, query, sort, currentPage, JSON.stringify(filters)]);
 
   return (
     <div style={{ padding: '20px' }}>
