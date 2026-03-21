@@ -5,6 +5,7 @@ import { setQuery, setSort, setPage, setFilters } from '../features/catalogUI/ca
 export default function CatalogPage() {
   const dispatch = useAppDispatch();
   const { query, sort, currentPage, filters } = useAppSelector((state) => state.catalogUI);
+  const { entities, results, loading, error } = useAppSelector((state) => state.products);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -67,6 +68,27 @@ export default function CatalogPage() {
           Toggle 'Dairy' Filter
         </button>
       </div>
+
+      <hr style={{ margin: '24px 0', border: 'none', borderTop: '1px solid #eee' }} />
+
+      <h2>Products</h2>
+      {loading && <p>Loading products...</p>}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {!loading && !error && results.length === 0 && <p>No products found.</p>}
+      {!loading && !error && results.length > 0 && (
+        <ul style={{ listStyleType: 'none', padding: 0 }}>
+          {results.map((id) => {
+            const product = entities[id];
+            if (!product) return null;
+            return (
+              <li key={product.id} style={{ padding: '8px 0', borderBottom: '1px solid #ccc' }}>
+                {product.name}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
-}
+}
+
