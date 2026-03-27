@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { setQuery, setSort, setPage, setFilters } from '../features/catalogUI/catalogUISlice';
 import { fetchProducts } from '../features/products/productsSlice';
@@ -7,6 +7,7 @@ export default function CatalogPage() {
   const dispatch = useAppDispatch();
   const { query, sort, currentPage, filters } = useAppSelector((state) => state.catalogUI);
   const { entities, results, loading, error } = useAppSelector((state) => state.products);
+  const [localQuery, setLocalQuery] = useState(query);
 
   useEffect(() => {
     // We stringify filters purely for dependency array safety
@@ -19,13 +20,17 @@ export default function CatalogPage() {
       
       <div style={{ marginBottom: '16px' }}>
         <label htmlFor="search" style={{ marginRight: '8px' }}>Search:</label>
-        <input 
-          id="search"
-          type="text" 
-          value={query} 
-          onChange={(e) => dispatch(setQuery(e.target.value))} 
-          placeholder="Search items..."
-        />
+        <div style={{ display: 'inline-flex', gap: '8px' }}>
+          <input 
+            id="search"
+            type="text" 
+            value={localQuery} 
+            onChange={(e) => setLocalQuery(e.target.value)} 
+            onKeyDown={(e) => e.key === 'Enter' && dispatch(setQuery(localQuery))}
+            placeholder="Search items..."
+          />
+          <button onClick={() => dispatch(setQuery(localQuery))}>Search</button>
+        </div>
       </div>
 
       <div style={{ marginBottom: '16px' }}>
@@ -88,7 +93,11 @@ export default function CatalogPage() {
             if (!product) return null;
             return (
               <li key={product.id} style={{ padding: '8px 0', borderBottom: '1px solid #ccc' }}>
-                {product.name}
+                <div style={{ fontWeight: 'bold' }}>{product.name}</div>
+                <div style={{ fontSize: '0.9em', color: '#666', marginTop: '4px' }}>
+                  {product.brands && <span style={{ marginRight: '16px' }}><strong>Brand:</strong> {product.brands}</span>}
+                  {product.origin && <span><strong>Origin:</strong> {product.origin}</span>}
+                </div>
               </li>
             );
           })}

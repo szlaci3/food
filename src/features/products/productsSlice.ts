@@ -3,6 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export interface Product {
   id: string;
   name: string;
+  origin?: string;
+  brands?: string;
 }
 
 export interface ProductsState {
@@ -23,6 +25,7 @@ export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async (args: FetchProductsArgs) => {
     const params = new URLSearchParams();
+    params.append('fields', '_id,id,product_name,product_name_en,origins,origin,brands');
     
     if (args.query) {
       params.append('search_terms', args.query);
@@ -49,6 +52,8 @@ export const fetchProducts = createAsyncThunk(
     return data.products.map((p: any) => ({
       id: p._id || p.id,
       name: p.product_name || p.product_name_en || 'Unknown Product',
+      origin: p.origin || p.origins || '',
+      brands: p.brands || ''
     })) as Product[];
   }
 );
